@@ -1,37 +1,36 @@
 local vim = vim 
 local Plug = vim.fn['plug#']
 
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+-- vim.g.loaded_netrw = 1
+-- vim.g.loaded_netrwPlugin = 1
 -- vim.opt.termguicolors = true
 
 vim.call('plug#begin', '~/.config/nvim/plugged')
-		Plug 'junegunn/vim-easy-align'
 		Plug 'jeffkreeftmeijer/vim-numbertoggle'
+		Plug 'junegunn/vim-easy-align'
 		Plug 'mbbill/undotree'
-		Plug 'kdheepak/lazygit.nvim'
 		Plug 'tpope/vim-surround'
+		Plug 'kdheepak/lazygit.nvim'
 		Plug 'akinsho/toggleterm.nvim'
 		Plug 'ggandor/lightspeed.nvim'
-		Plug 'folke/which-key.nvim'
+		Plug 'ThePrimeagen/harpoon'
+		-- Plug 'folke/which-key.nvim' --wanted only for spell, runs all the time
 		-- Plug 'm4xshen/autoclose.nvim'
 		Plug 'nvim-tree/nvim-tree.lua'
 		Plug 'L3MON4D3/LuaSnip'
-		Plug 'jackMort/ChatGPT.nvim'
-			Plug "MunifTanjim/nui.nvim"
+		Plug 'numToStr/Comment.nvim'
 
 		Plug 'lervag/vimtex'
 		Plug 'honza/vim-snippets' -- someday look into what it does, 
-		Plug 'SirVer/ultisnips'   -- currently have tex, md snippets
 		Plug 'micangl/cmp-vimtex' 
+		Plug 'SirVer/ultisnips'   -- currently have tex, md snippets
 
-		Plug '~/.config/nvim/plugged/illustrate.nvim' -- creating and inserting figures in md, tex
+		Plug '~/.config/nvim/plugged/figures-manager' -- creating and inserting figures in md, tex
 		Plug 'rcarriga/nvim-notify'
 
 		Plug 'nvim-telescope/telescope.nvim'
 		Plug 'nvim-telescope/telescope-bibtex.nvim' -- allows searching and inserting citations in md, tex files, extend it to open files in sioyek
 		Plug 'nvim-telescope/telescope-file-browser.nvim'
-		Plug 'axkirillov/easypick.nvim'
 
 		-- LSP thingy
 		Plug 'neovim/nvim-lspconfig'
@@ -40,18 +39,19 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 		Plug 'williamboman/mason.nvim'
 		Plug 'hrsh7th/nvim-cmp'
 			Plug 'hrsh7th/cmp-buffer'
-			Plug 'hrsh7th/cmp-path'    
+			Plug 'hrsh7th/cmp-path'
 			Plug 'hrsh7th/cmp-nvim-lsp'
 			Plug 'onsails/lspkind.nvim'
 			Plug 'lvimuser/lsp-inlayhints.nvim'
 
 		-- markdown, obsidian specific plugins
 		Plug 'epwalsh/obsidian.nvim'
-		Plug 'jalvesaq/zotcite' 
+		Plug 'jalvesaq/zotcite'
 			Plug 'nvim-lua/plenary.nvim'
 			Plug 'jalvesaq/cmp-zotcite'
 			Plug 'preservim/vim-markdown'
 
+		Plug 'pocco81/true-zen.nvim'
 		Plug 'catppuccin/nvim'
 		Plug 'lunacookies/vim-colors-xcode'
 		Plug 'mhartington/oceanic-next'
@@ -64,42 +64,69 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 		Plug 'jpalardy/vim-slime'
 vim.call('plug#end')
 
+--- harpoon.config	
+		require('harpoon').setup({
+			menu = { width = 120, height=20 }
+		})
+			vim.keymap.set('n', 'hx', require('harpoon.mark').add_file)
+			vim.keymap.set('n', 'hn', require('harpoon.ui').nav_next)
+			vim.keymap.set('n', 'hp', require('harpoon.ui').nav_prev)
+			vim.keymap.set('n', 'hb', require('harpoon.ui').toggle_quick_menu)
 
-		require("chatgpt").setup()
+--- comment.config #todo  read usage, gcc doesn't seem to work.
+		require('comment').setup()
+
+--- zen.mode.config
+		require('true-zen').setup({
+			modes = {
+				ataraxis = {
+					minimum_writing_area = { width=120}
+				}
+			}
+		})
+		vim.api.nvim_set_keymap("n", "<leader>zn", ":TZNarrow<CR>", {})
+		vim.api.nvim_set_keymap("v", "<leader>zn", ":'<,'>TZNarrow<CR>", {})
+		vim.api.nvim_set_keymap("n", "<leader>zf", ":TZFocus<CR>", {})
+		vim.api.nvim_set_keymap("n", "<leader>zm", ":TZMinimalist<CR>", {})
+		vim.api.nvim_set_keymap("n", "<leader>za", ":TZAtaraxis<CR>", {})
+
+		require('notify').setup()
+
+		-- require("chatgpt").setup()
 
 -- autoclose.config (https://github.com/m4xshen/autoclose.nvim)
 --		require('autoclose').setup()
 
 -- nvim-tree.config (netrw alternative) 
-		require('nvim-tree').setup({
-				view = { width = 30,},
-		})
-		function find_directory_and_focus()
-	  		local actions = require("telescope.actions")
-	  		local action_state = require("telescope.actions.state")
-
-	  		local function open_nvim_tree(prompt_bufnr, _)
-	  		  actions.select_default:replace(function()
-	  		    local api = require("nvim-tree.api")
-
-	  		    actions.close(prompt_bufnr)
-	  		    local selection = action_state.get_selected_entry()
-	  		    api.tree.open()
-	  		    api.tree.find_file(selection.cwd .. "/" .. selection.value)
-	  		  end)
-	  		  return true
-	  		end
-
-	  		require("telescope.builtin").find_files({
-				find_command = { "fd", "--type", "directory", "--hidden", "--exclude", ".git/*", "" },
-	  		  attach_mappings = open_nvim_tree,
-	  		})
-		end
-
-		vim.keymap.set("n", "<leader>fd", find_directory_and_focus)
+			require('nvim-tree').setup({
+					view = { width = 30,},
+			})
+			function find_directory_and_focus()
+				local actions = require("telescope.actions")
+				local action_state = require("telescope.actions.state")
+			
+				local function open_nvim_tree(prompt_bufnr, _)
+				  actions.select_default:replace(function()
+				    local api = require("nvim-tree.api")
+			
+				    actions.close(prompt_bufnr)
+				    local selection = action_state.get_selected_entry()
+				    api.tree.open()
+				    api.tree.find_file(selection.cwd .. "/" .. selection.value)
+				  end)
+				  return true
+				end
+			
+				require("telescope.builtin").find_files({
+					find_command = { "fd", "--type", "directory", "--hidden", "--exclude", ".git/*", "" },
+				  attach_mappings = open_nvim_tree,
+				})
+			end
+			
+			vim.keymap.set("n", "<leader>fd", find_directory_and_focus)
 
 -- whichkey.config
-		require('which-key').setup()
+		-- require('which-key').setup()
 
 -- lightspeed.config
 		require('lightspeed').setup({
@@ -112,12 +139,9 @@ vim.call('plug#end')
 			hide_numbers = true,
 			start_in_insert = true,
 		})
-		vim.keymap.set("n", "<c-t>", "<Cmd>exe v:count1 . 'ToggleTerm direction=vertical'<CR>")
-		vim.keymap.set("i", "<c-t>", "<Esc><Cmd>exe v:count1 . 'ToggleTerm direction=vertical'<CR>")
-		vim.keymap.set("t", "<c-t>", "<Cmd>exe v:count1 . 'ToggleTerm'<CR>")
+		vim.keymap.set("n", "<leader>tf", "<Cmd>exe v:count1 . 'ToggleTerm direction=float'<CR>", {silent=true})
 		vim.keymap.set("n", "<c-\\>", "<Cmd>exe v:count1 . 'ToggleTerm direction=vertical'<CR>", {silent=true})
 		vim.keymap.set("t", "<c-\\>", "<Cmd>exe v:count1 . 'ToggleTerm direction=vertical'<CR>", {silent=true})
-
 
 
 -- telescope.config
@@ -311,18 +335,15 @@ vim.call('plug#end')
 		-- edit files 
 		vim.keymap.set('n', '<leader>ec', ':tabnew $MYVIMRC<CR>', {silent=true}) -- edit init file
 		vim.keymap.set('n', '<leader>so', ':so ~/.config/nvim/init.lua<CR>')  -- source init
-		
 		vim.keymap.set('n', '<c-w>t', ':tabnew<CR>')
-		vim.keymap.set('n', '<TAB>', function() 
-				return "m`"..vim.v.count.."gt``"
-			end, {expr = true}) 										 -- switching tabs 
-		vim.keymap.set('n', '<S-TAB>',':tabprevious<CR>', {silent=true}) -- switching tabs 
-		
-		vim.keymap.set(
-		    "i",
-		    "<C-f>",
-		    "<Esc><cmd>exec 'r!inkscape-figures-manager new -f -d figures -l \"'.getline('.').'\"'<CR>kkkkkkddjjjf{a"
-		)
+
+		-- vim.keymap.set('n', '<TAB>', function() 
+		--		return "m`"..vim.v.count.."gt``"
+		--	end, {expr = true}) 										 -- switching tabs 
+		-- vim.keymap.set('n', '<S-TAB>',':tabprevious<CR>', {silent=true}) -- switching tabs 
+
+		-- vim.keymap.set("i", "<C-f>", "<Esc><cmd>exec 'r!inkscape-figures-manager new -f -d figures -l \"'.getline('.').'\"'<CR>kkkkkkddjjjf{a")
+
 
 vim.opt.termguicolors = true
 vim.cmd([[
@@ -390,5 +411,4 @@ vim.cmd([[
 		vim.cmd('hi! link Conceal LocalIdent')
 
 
-		require('notify').setup()
 

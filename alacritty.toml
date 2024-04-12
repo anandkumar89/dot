@@ -1,0 +1,17 @@
+import = [
+	'/Users/anand.kumar/.config/alacritty/keybindings.toml'
+]
+
+
+[window]
+option_as_alt = "both"
+decorations = "Buttonless"
+
+[font]
+size 	= 14
+
+[font.normal] 
+family 	= "RobotoMono Nerd Font Mono"
+style 	= "Light"
+
+
