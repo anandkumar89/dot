@@ -1,9 +1,9 @@
-local vim = vim 
+local vim = vim
 local Plug = vim.fn['plug#']
 
--- vim.g.loaded_netrw = 1
--- vim.g.loaded_netrwPlugin = 1
--- vim.opt.termguicolors = true
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+vim.opt.termguicolors = true
 
 vim.call('plug#begin', '~/.config/nvim/plugged')
 		Plug 'jeffkreeftmeijer/vim-numbertoggle'
@@ -14,7 +14,7 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 		Plug 'akinsho/toggleterm.nvim'
 		Plug 'ggandor/lightspeed.nvim'
 		Plug 'ThePrimeagen/harpoon'
-		-- Plug 'folke/which-key.nvim' --wanted only for spell, runs all the time
+		Plug 'folke/which-key.nvim' --wanted only for spell, runs all the time
 		-- Plug 'm4xshen/autoclose.nvim'
 		Plug 'nvim-tree/nvim-tree.lua'
 		Plug 'L3MON4D3/LuaSnip'
@@ -22,14 +22,14 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 
 		Plug 'lervag/vimtex'
 		Plug 'honza/vim-snippets' -- someday look into what it does, 
-		Plug 'micangl/cmp-vimtex' 
+		Plug 'micangl/cmp-vimtex'
 		Plug 'SirVer/ultisnips'   -- currently have tex, md snippets
 
 		Plug '~/.config/nvim/plugged/figures-manager' -- creating and inserting figures in md, tex
 		Plug 'rcarriga/nvim-notify'
 
 		Plug 'nvim-telescope/telescope.nvim'
-		Plug 'nvim-telescope/telescope-bibtex.nvim' -- allows searching and inserting citations in md, tex files, extend it to open files in sioyek
+		Plug 'nvim-telescope/telescope-bibtex.nvim' -- allows searching and inserting citationste in md, tex files, extend it to open files in sioyek
 		Plug 'nvim-telescope/telescope-file-browser.nvim'
 
 		-- LSP thingy
@@ -64,16 +64,17 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 		Plug 'jpalardy/vim-slime'
 vim.call('plug#end')
 
+
 --- harpoon.config	
 		require('harpoon').setup({
-			menu = { width = 120, height=20 }
+			menu = { width = 80, height=15 }
 		})
 			vim.keymap.set('n', 'hx', require('harpoon.mark').add_file)
 			vim.keymap.set('n', 'hn', require('harpoon.ui').nav_next)
 			vim.keymap.set('n', 'hp', require('harpoon.ui').nav_prev)
 			vim.keymap.set('n', 'hb', require('harpoon.ui').toggle_quick_menu)
 
---- comment.config #todo  read usage, gcc doesn't seem to work.
+--- comment.config gc, gcc to toggle comment 
 		require('comment').setup()
 
 --- zen.mode.config
@@ -97,40 +98,13 @@ vim.call('plug#end')
 -- autoclose.config (https://github.com/m4xshen/autoclose.nvim)
 --		require('autoclose').setup()
 
--- nvim-tree.config (netrw alternative) 
-			require('nvim-tree').setup({
-					view = { width = 30,},
-			})
-			function find_directory_and_focus()
-				local actions = require("telescope.actions")
-				local action_state = require("telescope.actions.state")
-			
-				local function open_nvim_tree(prompt_bufnr, _)
-				  actions.select_default:replace(function()
-				    local api = require("nvim-tree.api")
-			
-				    actions.close(prompt_bufnr)
-				    local selection = action_state.get_selected_entry()
-				    api.tree.open()
-				    api.tree.find_file(selection.cwd .. "/" .. selection.value)
-				  end)
-				  return true
-				end
-			
-				require("telescope.builtin").find_files({
-					find_command = { "fd", "--type", "directory", "--hidden", "--exclude", ".git/*", "" },
-				  attach_mappings = open_nvim_tree,
-				})
-			end
-			
-			vim.keymap.set("n", "<leader>fd", find_directory_and_focus)
 
 -- whichkey.config
-		-- require('which-key').setup()
+		require('which-key').setup()
 
 -- lightspeed.config
 		require('lightspeed').setup({
-				ignore_case=true, 
+				ignore_case=true,
 		})
 
 -- toggleterm.config
@@ -146,6 +120,9 @@ vim.call('plug#end')
 
 -- telescope.config
 		local bibtex_actions = require('telescope-bibtex.actions')
+		local action_state  = require('telescope.actions.state')
+		local actions 		= require('telescope.actions')
+		local job 			= require('plenary.job')
 		require('telescope').setup({
 			defaults = {
 				file_ignore_patterns = {
@@ -158,19 +135,82 @@ vim.call('plug#end')
 				bibtex = {
 					depth=2,
 					format='plain',
+					global_files = {'~/Dropbox/Apps/Overleaf/bib/online.bib', '~/Dropbox/Apps/Overleaf/bib/library.bib'},
 					search_keys = {'author', 'year', 'title'},
 					context = true,
 					mappings = {
 						  i = {
-								["<CR>"] = bibtex_actions.key_append('%s'), -- format is determined by filetype if the user has not set it explictly
+								["<C-o>"] = bibtex_actions.key_append('%s'), -- format is determined by filetype if the user has not set it explictly
 								["<C-e>"] = bibtex_actions.entry_append,
 								["<C-c>"] = bibtex_actions.citation_append('{{author}} ({{year}}), {{title}}.'),
+								["<CR>"] = function(prompt_bufnr)
+												local entry = action_state.get_selected_entry().id.content
+												-- local files = {} -- TODO handle multiple files, show harpoon like UI to select file
+												-- local extensions = {}
+												actions.close(prompt_bufnr)
+												entry = table.concat(entry, "\n")
+												for paths in entry:gmatch("file%s*=%s*{([^}]+)}") do
+													for path in paths:gmatch("[^,]+") do
+														path = vim.trim(path)
+														local ext  = path:match("^.+%.(.+)$")
+														-- table.insert(files, path)
+														-- table.insert(extensions,ext)
+														if ext == "pdf" then
+																job:new({
+																  command = "/Applications/sioyek.app/Contents/MacOS/sioyek",
+																  args = { path },
+																  detached = true,
+																}):start()
+																break
+														end
+													end
+												end
+										  end,
 							  }
 						 },
 					wrap = true,
 					}
 					}
 		})
+		require('telescope').load_extension("bibtex")
+
+		-- telescope.keymaps 
+			local builtin = require('telescope.builtin')
+			vim.keymap.set('n', '<leader>te', ':Telescope<CR>', {})
+			vim.keymap.set('n', '<leader>to', builtin.commands, {})
+			vim.keymap.set('n', '<leader>ff', builtin.find_files, {desc = "Browse Files in cwd"})
+			vim.keymap.set('n', '<leader>fg', builtin.live_grep, {desc = "Live Grep cwd"})
+			vim.keymap.set('n', '<leader>fb', builtin.buffers, {desc = "Open Buffers"})
+			vim.keymap.set("n", "<leader>fz", ":Telescope bibtex<CR>", {desc = "Browse Zotero Library"})
+			vim.keymap.set("n", "<leader>ee", ":Telescope file_browser path=%:p:h select_buffer=true<CR>")
+			vim.keymap.set("n", "<leader>ec", function ()
+				builtin.find_files { cwd = vim.fn.stdpath 'config' }
+			end, {desc = '[s]earch [N]eovim files'})
+
+-- nvim-tree.config (netrw alternative) 
+			require('nvim-tree').setup({
+					view = { width = 30,},
+			})
+			function find_directory_and_focus()
+				local actions = require("telescope.actions")
+				local action_state = require("telescope.actions.state")
+				local function open_nvim_tree(prompt_bufnr, _)
+				  actions.select_default:replace(function()
+				    local api = require("nvim-tree.api")
+				    actions.close(prompt_bufnr)
+				    local selection = action_state.get_selected_entry()
+				    api.tree.open()
+				    api.tree.find_file(selection.cwd .. "/" .. selection.value)
+				  end)
+				  return true
+				end
+				require("telescope.builtin").find_files({
+					find_command = { "fd", "--type", "directory", "--hidden", "--exclude", ".git/*", "" },
+				  attach_mappings = open_nvim_tree,
+				})
+			end
+			vim.keymap.set("n", "<leader>fd", find_directory_and_focus)
+
 
 -- obsidian-config
 		require('obsidian').setup({
@@ -184,7 +224,8 @@ vim.call('plug#end')
 				subdir = "Meta/Templates"
 			},
 			attachments = {
-				img_folder = "Meta/Attachments"
+				img_folder = "Meta/Attachments",
+				confirm_img_paste = true,
 			},
 			daily_notes = {
 				folder = "Meta/Daily Document",
@@ -200,21 +241,21 @@ vim.call('plug#end')
 			end
 		})
 
-		vim.keymap.set('n', '<leader>oo', ':ObsidianSearch<CR>') 
-		vim.keymap.set('n', '<leader>os', ':ObsidianQuickSwitch<CR>') 
-		vim.keymap.set('n', '<leader>ot', ':ObsidianToday<CR>') 
-		vim.keymap.set('n', '<leader>ob', ':ObsidianBacklinks<CR>') 
+		vim.keymap.set('n', '<leader>oo', ':ObsidianSearch<CR>')
+		vim.keymap.set('n', '<leader>os', ':ObsidianQuickSwitch<CR>')
+		vim.keymap.set('n', '<leader>ot', ':ObsidianToday<CR>')
+		vim.keymap.set('n', '<leader>ob', ':ObsidianBacklinks<CR>')
 
 
 -- cmp-config
 		local capabilities = require('cmp_nvim_lsp').default_capabilities()
-		local lspkind = require('lspkind')	
+		local lspkind = require('lspkind')
 		local cmp = require('cmp')
 		cmp.setup {
 			-- global config goes here
 			preselect = 'item',
 			completion = {
-				 completeopt = 'menu,menuone,noinsert' 	
+				 completeopt = 'menu,menuone,noinsert'
 		    },
 			sources = cmp.config.sources({
 				{ name = 'path', max_item_count=4},
@@ -230,15 +271,16 @@ vim.call('plug#end')
 			}),
 			formatting = {
 				format = lspkind.cmp_format({
-						mode 		= 'symbol',
+						-- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
+						mode 		= 'symbol_text',
 						preset 		= 'default',
 						show_labelDetails = true,
 						maxwidth	= 50,
 						ellipsis_char= '..',
-				})	
+				})
 			},
 			snippets = {
-				expand = function (args) 
+				expand = function (args)
 					vim.fn["vsnip#anonymous"](args.body)
 				end
 			}
@@ -259,10 +301,10 @@ vim.call('plug#end')
 				local opts = {buffer = bufnr, remap=false}
 				vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
 				vim.keymap.set("n", "K",  function() vim.lsp.buf.hover() end, opts)
-				vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts)
 				vim.keymap.set("n", "<leader>vd",  function() vim.diagnostic.open_float() end, opts)
 				vim.keymap.set("n", "[d",          function() vim.diagnostic.goto_prev() end, opts)
 				vim.keymap.set("n", "]d",  		   function() vim.diagnostic.goto_next() end, opts)
+				vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts)
 				vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
 				vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.rename() end, opts)
 		end)
@@ -279,15 +321,6 @@ vim.call('plug#end')
 				},
 		})
 
-
--- telescope-config
-		local builtin = require('telescope.builtin')
-		vim.keymap.set('n', '<leader>te', ':Telescope<CR>', {})
-		vim.keymap.set('n', '<leader>to', builtin.commands, {})
-		vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-		vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
-		vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-		vim.keymap.set("n", "<leader>ee", ":Telescope file_browser path=%:p:h select_buffer=true<CR>")
 
 
 -- illustrate-config
@@ -333,7 +366,6 @@ vim.call('plug#end')
 
 -- general keymaps 
 		-- edit files 
-		vim.keymap.set('n', '<leader>ec', ':tabnew $MYVIMRC<CR>', {silent=true}) -- edit init file
 		vim.keymap.set('n', '<leader>so', ':so ~/.config/nvim/init.lua<CR>')  -- source init
 		vim.keymap.set('n', '<c-w>t', ':tabnew<CR>')
 
@@ -409,6 +441,3 @@ vim.cmd([[
 		vim.cmd('hi! link qfLineNr Normal')
 		vim.cmd('hi! link EndOfBuffer LineNr')
 		vim.cmd('hi! link Conceal LocalIdent')
-
-
-

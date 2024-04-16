@@ -153,3 +153,12 @@ chars = "\u001F" # Ctrl + _
 key = "_"
 mods = "Command"
 
+[[keyboard.bindings]]
+action 	= "SpawnNewInstance"
+key 	= "N"
+mods    = "Control"
+
+[[keyboard.bindings]]
+action  = "Paste"
+key 	= "Space"
+mods 	= "Command | Shift"
