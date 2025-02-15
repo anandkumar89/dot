@@ -14,8 +14,9 @@ texstudio
 wireshark
 zsh
 nvim/plugged/*
+nvim/autoload/*
 karabiner/*
 htop/*
 github-copilot/*
 darktable/*
-alacritty/themes/*
+alacritty/themes
