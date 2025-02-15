@@ -154,7 +154,7 @@ key = "_"
 mods = "Command"
 
 [[keyboard.bindings]]
-action 	= "SpawnNewInstance"
+action 	= "CreateNewWindow"
 key 	= "N"
 mods    = "Control"
 

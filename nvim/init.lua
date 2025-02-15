@@ -4,21 +4,24 @@ local Plug = vim.fn['plug#']
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 vim.opt.termguicolors = true
+-- vim.treesitter.language.disable['tex'] = true
+
 
 vim.call('plug#begin', '~/.config/nvim/plugged')
+		-- Plug '~/.config/nvim/plugged/zotero'
 		Plug 'jeffkreeftmeijer/vim-numbertoggle'
 		Plug 'junegunn/vim-easy-align'
 		Plug 'mbbill/undotree'
-		Plug 'tpope/vim-surround'
-		Plug 'kdheepak/lazygit.nvim'
 		Plug 'akinsho/toggleterm.nvim'
-		Plug 'ggandor/lightspeed.nvim'
+		Plug 'kylechui/nvim-surround'
+		Plug 'ggandor/leap.nvim'
 		Plug 'ThePrimeagen/harpoon'
-		Plug 'folke/which-key.nvim' --wanted only for spell, runs all the time
+		-- Plug 'folke/which-key.nvim' --wanted only for spell, runs all the time
 		-- Plug 'm4xshen/autoclose.nvim'
 		Plug 'nvim-tree/nvim-tree.lua'
 		Plug 'L3MON4D3/LuaSnip'
 		Plug 'numToStr/Comment.nvim'
+		Plug 'github/copilot.vim'
 
 		Plug 'lervag/vimtex'
 		Plug 'honza/vim-snippets' -- someday look into what it does, 
@@ -29,8 +32,13 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 		Plug 'rcarriga/nvim-notify'
 
 		Plug 'nvim-telescope/telescope.nvim'
-		Plug 'nvim-telescope/telescope-bibtex.nvim' -- allows searching and inserting citationste in md, tex files, extend it to open files in sioyek
-		Plug 'nvim-telescope/telescope-file-browser.nvim'
+			-- Plug 'nvim-telescope/telescope-bibtex.nvim' -- allows searching and inserting citations in md, tex files, extend it to open files in sioyek | removed in favor of zotcite's Zseek (yet to configure opening in sioyek)
+			Plug 'nvim-telescope/telescope-file-browser.nvim'
+			Plug "isak102/telescope-git-file-history.nvim"
+			Plug 'tpope/vim-fugitive'
+			Plug 'lewis6991/gitsigns.nvim'
+
+		Plug 'tpope/vim-obsession'
 
 		-- LSP thingy
 		Plug 'neovim/nvim-lspconfig'
@@ -57,6 +65,7 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 		Plug 'mhartington/oceanic-next'
 		Plug 'cocopon/iceberg.vim'
 		Plug 'navarasu/onedark.nvim'
+		Plug 'projekt0n/github-nvim-theme'
 		-- Plug 'f-person/auto-dark-mode.nvim' --works by creating a background job, just toggle manually
 
 		Plug 'JuliaEditorSupport/julia-vim'
@@ -64,6 +73,12 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 		Plug 'jpalardy/vim-slime'
 vim.call('plug#end')
 
+--- copilot.config
+		vim.g.copilot_filetypes = {lua=true, tex=false, text=true, python=true, markdown=false}
+		vim.g.copilot_keymap_enabled = 1
+		vim.g.copilot_keymap_next = '<C-]>'
+		vim.g.copilot_keymap_prev = '<C-[>'
+		vim.g.copilot_keymap_accept = '<C-L>'
 
 --- harpoon.config	
 		require('harpoon').setup({
@@ -86,41 +101,62 @@ vim.call('plug#end')
 			}
 		})
 		vim.api.nvim_set_keymap("n", "<leader>zn", ":TZNarrow<CR>", {})
-		vim.api.nvim_set_keymap("v", "<leader>zn", ":'<,'>TZNarrow<CR>", {})
-		vim.api.nvim_set_keymap("n", "<leader>zf", ":TZFocus<CR>", {})
-		vim.api.nvim_set_keymap("n", "<leader>zm", ":TZMinimalist<CR>", {})
-		vim.api.nvim_set_keymap("n", "<leader>za", ":TZAtaraxis<CR>", {})
+		-- vim.api.nvim_set_keymap("v", "<leader>zn", ":'<,'>TZNarrow<CR>", {})
+		-- vim.api.nvim_set_keymap("n", "<leader>zf", ":TZFocus<CR>", {})
+		-- vim.api.nvim_set_keymap("n", "<leader>zm", ":TZMinimalist<CR>", {})
+		-- vim.api.nvim_set_keymap("n", "<leader>za", ":TZAtaraxis<CR>", {})
 
-		require('notify').setup()
+		require('notify').setup({
+			render = "minimal",
+			top_down = false,
+			max_width = 80
+		})
 
 		-- require("chatgpt").setup()
 
 -- autoclose.config (https://github.com/m4xshen/autoclose.nvim)
 --		require('autoclose').setup()
 
+-- zotcite.config 
+	require('zotcite').setup({
+		filetypes= {"markdown", "tex"},
+		open_cmd = "/Applications/sioyek.app/Contents/MacOS/sioyek"
+	})
+	require('cmp_zotcite').setup({
+		filetypes= {"markdown"}
+	})
 
 -- whichkey.config
-		require('which-key').setup()
+		-- require('which-key').setup()
 
--- lightspeed.config
-		require('lightspeed').setup({
-				ignore_case=true,
+
+
+-- nvim.surround.config
+		require('nvim-surround').setup({
+			keymaps = {
+				visual = "z"
+			}
 		})
+
+
+-- leap.config
+		require('leap').create_default_mappings()
 
 -- toggleterm.config
 		require('toggleterm').setup({
-			size = 80,
+			size = 60,
 			hide_numbers = true,
-			start_in_insert = true,
+			start_in_insert = false,
 		})
-		vim.keymap.set("n", "<leader>tf", "<Cmd>exe v:count1 . 'ToggleTerm direction=float'<CR>", {silent=true})
-		vim.keymap.set("n", "<c-\\>", "<Cmd>exe v:count1 . 'ToggleTerm direction=vertical'<CR>", {silent=true})
-		vim.keymap.set("t", "<c-\\>", "<Cmd>exe v:count1 . 'ToggleTerm direction=vertical'<CR>", {silent=true})
+		vim.keymap.set("n", "<localleader>tf", "<Cmd>exe v:count1 . 'ToggleTerm direction=float'<CR>", {silent=true})
+		vim.keymap.set("n", "<c-\\>", "<Cmd>exe v:count1 . 'ToggleTerm direction=vertical '<CR>", {silent=true})
+		vim.keymap.set("t", "<c-\\>", "<Cmd>exe v:count1 . 'ToggleTerm direction=vertical '<CR>", {silent=true})
 
 
 -- telescope.config
-		local bibtex_actions = require('telescope-bibtex.actions')
+		-- local bibtex_actions = require('telescope-bibtex.actions')
 		local action_state  = require('telescope.actions.state')
+		local action_layout = require('telescope.actions.layout')
 		local actions 		= require('telescope.actions')
 		local job 			= require('plenary.job')
 		require('telescope').setup({
@@ -128,88 +164,110 @@ vim.call('plug#end')
 				file_ignore_patterns = {
 					".aux", ".fdb_latexmk", ".fls", ".log", ".git/.*", ".lock", ".gz", ".out", ".blg", ".bbl", ".bst", ".pdf"
 				},
-				layout_strategy = 'vertical',
+				mappings = {
+					i = {
+							["<C-l>"] = action_layout.cycle_layout_next,
+					},
+					n = {
+							["<C-l>"] = action_layout.cycle_layout_next,
+					}
+				},
+				layout_strategy = 'horizontal',
 				layout_config   = {height = 0.95 },
-			},
-			extensions = {
-				bibtex = {
-					depth=2,
-					format='plain',
-					global_files = {'~/Dropbox/Apps/Overleaf/bib/online.bib', '~/Dropbox/Apps/Overleaf/bib/library.bib'},
-					search_keys = {'author', 'year', 'title'},
-					context = true,
-					mappings = {
-						  i = {
-								["<C-o>"] = bibtex_actions.key_append('%s'), -- format is determined by filetype if the user has not set it explictly
-								["<C-e>"] = bibtex_actions.entry_append,
-								["<C-c>"] = bibtex_actions.citation_append('{{author}} ({{year}}), {{title}}.'),
-								["<CR>"] = function(prompt_bufnr)
-												local entry = action_state.get_selected_entry().id.content
-												-- local files = {} -- TODO handle multiple files, show harpoon like UI to select file
-												-- local extensions = {}
-												actions.close(prompt_bufnr)
-												entry = table.concat(entry, "\n")
-												for paths in entry:gmatch("file%s*=%s*{([^}]+)}") do
-													for path in paths:gmatch("[^,]+") do
-														path = vim.trim(path)
-														local ext  = path:match("^.+%.(.+)$")
-														-- table.insert(files, path)
-														-- table.insert(extensions,ext)
-														if ext == "pdf" then
-																job:new({
-																  command = "/Applications/sioyek.app/Contents/MacOS/sioyek",
-																  args = { path },
-																  detached = true,
-																}):start()
-																break
-														end
-													end
-												end
-										  end,
-							  }
-						 },
-					wrap = true,
-					}
-					}
+			}
+			-- extensions = {
+			-- 	bibtex = {
+			-- 		depth=2,
+			-- 		format='plain',
+			-- 		global_files = {'~/Dropbox/Apps/Overleaf/bib/library.bib'},
+			-- 		search_keys = {'author', 'year', 'title'},
+			-- 		context = true,
+			-- 		mappings = {
+			-- 			  i = {
+			-- 					["<C-o>"] = bibtex_actions.key_append('%s'), -- format is determined by filetype if the user has not set it explictly
+			-- 					["<C-e>"] = bibtex_actions.entry_append,
+			-- 					["<C-c>"] = bibtex_actions.citation_append('{{author}} ({{year}}), {{title}}.'),
+			-- 					["<CR>"] = function(prompt_bufnr)
+			-- 									local entry = action_state.get_selected_entry().id.content
+			-- 									-- local files = {} -- TODO handle multiple files, show harpoon like UI to select file
+			-- 									-- local extensions = {}
+			-- 									actions.close(prompt_bufnr)
+			-- 									entry = table.concat(entry, "\n")
+			--
+			-- 									-- -- Iterate over each substring separated by ';'
+			-- 									-- for filename in fileString:gmatch("[^;]+") do
+			-- 									--     -- Check if the file extension is '.pdf'
+			-- 									--     if filename:match("%.pdf$") then
+			-- 									--         -- Store the first PDF file and break the loop
+			-- 									--         firstPDF = filename
+			-- 									--         break
+			-- 									--     end
+			-- 									-- end
+			-- 									for paths in entry:gmatch("file%s*=%s*{([^}]+)}") do
+			-- 										for path in paths:gmatch("[^,]+") do
+			-- 											path = vim.trim(path)
+			-- 											local ext  = path:match("^.+%.(.+)$")
+			-- 											-- table.insert(files, path)
+			-- 											-- table.insert(extensions,ext)
+			-- 											if ext == "pdf" then
+			-- 													job:new({
+			-- 													  command = "/Applications/sioyek.app/Contents/MacOS/sioyek",
+			-- 													  args = { path },
+			-- 													  detached = true,
+			-- 													}):start()
+			-- 													break
+			-- 											end
+			-- 										end
+			-- 									end
+			-- 							  end,
+			-- 				  }
+			-- 			 },
+			-- 		wrap = false,
+			-- 		}
+			-- }
 		})
-		require('telescope').load_extension("bibtex")
+		-- require('telescope').load_extension("bibtex")
+		require("telescope").load_extension("git_file_history")
+		-- require("telescope").load_extension("zotero") -- TODO someday handling zotero database better than zotcite?
 
 		-- telescope.keymaps 
 			local builtin = require('telescope.builtin')
-			vim.keymap.set('n', '<leader>te', ':Telescope<CR>', {})
-			vim.keymap.set('n', '<leader>to', builtin.commands, {})
-			vim.keymap.set('n', '<leader>ff', builtin.find_files, {desc = "Browse Files in cwd"})
-			vim.keymap.set('n', '<leader>fg', builtin.live_grep, {desc = "Live Grep cwd"})
-			vim.keymap.set('n', '<leader>fb', builtin.buffers, {desc = "Open Buffers"})
-			vim.keymap.set("n", "<leader>fz", ":Telescope bibtex<CR>", {desc = "Browse Zotero Library"})
-			vim.keymap.set("n", "<leader>ee", ":Telescope file_browser path=%:p:h select_buffer=true<CR>")
+			vim.keymap.set('n', '<leader>tt', ':Telescope<CR>', {})
+			vim.keymap.set('n', '<leader>tc', builtin.commands, {})
+			vim.keymap.set('n', '<leader>tg', builtin.live_grep, {desc = "Live Grep cwd"})
+			vim.keymap.set('n', '<leader>tb', builtin.buffers, {desc = "Open Buffers"})
+			vim.keymap.set("n", "<leader>tz", ":Zseek<CR>", {desc = "Browse Zotero Library"})
+			vim.keymap.set('n', '<leader>to', builtin.oldfiles, {desc ="Browse Old files"})
+			vim.keymap.set('n', '<leader>tf', builtin.find_files, {desc = "Browse Files in cwd"})
+			vim.keymap.set("n", "<leader>te", ":Telescope file_browser path=%:p:h select_buffer=true<CR>")
 			vim.keymap.set("n", "<leader>ec", function ()
 				builtin.find_files { cwd = vim.fn.stdpath 'config' }
 			end, {desc = '[s]earch [N]eovim files'})
 
 -- nvim-tree.config (netrw alternative) 
-			require('nvim-tree').setup({
-					view = { width = 30,},
-			})
-			function find_directory_and_focus()
-				local actions = require("telescope.actions")
-				local action_state = require("telescope.actions.state")
-				local function open_nvim_tree(prompt_bufnr, _)
-				  actions.select_default:replace(function()
-				    local api = require("nvim-tree.api")
-				    actions.close(prompt_bufnr)
-				    local selection = action_state.get_selected_entry()
-				    api.tree.open()
-				    api.tree.find_file(selection.cwd .. "/" .. selection.value)
-				  end)
-				  return true
-				end
-				require("telescope.builtin").find_files({
-					find_command = { "fd", "--type", "directory", "--hidden", "--exclude", ".git/*", "" },
-				  attach_mappings = open_nvim_tree,
-				})
+		require('nvim-tree').setup({
+				view = { width = 30,},
+		})
+		function find_directory_and_focus()
+			local actions = require("telescope.actions")
+			local action_state = require("telescope.actions.state")
+			local function open_nvim_tree(prompt_bufnr, _)
+			  actions.select_default:replace(function()
+				local api = require("nvim-tree.api")
+				actions.close(prompt_bufnr)
+				local selection = action_state.get_selected_entry()
+				api.tree.open()
+				api.tree.find_file(selection.cwd .. "/" .. selection.value)
+			  end)
+			  return true
 			end
-			vim.keymap.set("n", "<leader>fd", find_directory_and_focus)
+			require("telescope.builtin").find_files({
+				find_command = { "fd", "--type", "directory", "--hidden", "--exclude", ".git/*", "" },
+			  attach_mappings = open_nvim_tree,
+			})
+		end
+		vim.keymap.set("n", "<leader>td", find_directory_and_focus)
+		vim.keymap.set("n", "<leader>nv", ":NvimTreeToggle<CR>")
 
 
 -- obsidian-config
@@ -221,7 +279,9 @@ vim.call('plug#end')
 				},
 			},
 			templates = {
-				subdir = "Meta/Templates"
+				subdir = "Meta/Templates",
+				date_format = "%Y-%m-%d",
+				time_format = "%H:%M",
 			},
 			attachments = {
 				img_folder = "Meta/Attachments",
@@ -243,12 +303,69 @@ vim.call('plug#end')
 
 		vim.keymap.set('n', '<leader>oo', ':ObsidianSearch<CR>')
 		vim.keymap.set('n', '<leader>os', ':ObsidianQuickSwitch<CR>')
-		vim.keymap.set('n', '<leader>ot', ':ObsidianToday<CR>')
-		vim.keymap.set('n', '<leader>ob', ':ObsidianBacklinks<CR>')
+		-- vim.keymap.set('n', '<leader>ot', ':ObsidianToday<CR>')
+		vim.keymap.set('n', '<leader>or', ':ObsidianBacklinks<CR>')
+		vim.keymap.set('n', '<leader>ot', ':ObsidianNewFromTemplate<CR>')
 
+-- custom-floating-todo
+		function open_floating_task_file(filepath)
+			-- The file to open (change this to your specific file path)
+			local file_path = vim.fn.expand(filepath)  -- Replace with your file
+
+			-- Create a new buffer
+			local buf = vim.api.nvim_create_buf(false, true)
+
+			-- Define window dimensions and position
+			local width = math.floor(vim.o.columns * 0.6)  -- 60% of screen width
+			local height = math.floor(vim.o.lines * 0.6)  -- 60% of screen height
+			local row = math.floor((vim.o.lines - height) / 2)  -- Center the window vertically
+			local col = math.floor((vim.o.columns - width) / 2) -- Center the window horizontally
+
+			-- Set window options for the floating window
+			local opts = {
+				style = "minimal",
+				relative = "editor",
+				width = width,
+				height = height,
+				row = row,
+				col = col,
+				border = "rounded"  -- Rounded border for aesthetics
+			}
+
+			-- Open the window with the buffer
+			vim.api.nvim_open_win(buf, true, opts)
+
+			-- Load the file into the buffer
+			vim.cmd("edit " .. file_path)
+
+			-- Optional: Set buffer options (e.g., make it non-modifiable)
+			vim.api.nvim_buf_set_option(buf, 'modifiable', true)
+
+			-- Set keybinding to close the floating window by pressing 'q'
+			vim.api.nvim_buf_set_keymap(buf, 'n', 'q', ':w | :bd! | :q<CR>', { noremap = true, silent = true })
+
+			-- Make sure the buffer gets written when dismissed
+			vim.api.nvim_create_autocmd('BufWriteCmd', {
+				buffer = buf,
+				callback = function()
+					vim.cmd('write')  -- Write the buffer when closing
+				end
+			})
+		end
+
+		vim.api.nvim_set_keymap('n', '<leader>ft', ':lua open_floating_task_file("~/Desktop/Overleaf/status.md")<CR>', { noremap = true, silent = true })
+
+
+-- gitsigns.config 
+	require('gitsigns').setup({
+		numhl = true,
+		signcolumn = false,
+	})
+	vim.keymap.set('n', '<leader>gp', ':lua require"gitsigns".preview_hunk()<CR>')
 
 -- cmp-config
 		local capabilities = require('cmp_nvim_lsp').default_capabilities()
+		local luasnip = require('luasnip')
 		local lspkind = require('lspkind')
 		local cmp = require('cmp')
 		cmp.setup {
@@ -260,8 +377,15 @@ vim.call('plug#end')
 			sources = cmp.config.sources({
 				{ name = 'path', max_item_count=4},
 				{ name = 'cmp_zotcite', max_item_count=5},
-				{ name = 'buffer', keyword_length=2, max_item_count=3},
-				{ name = 'nvim_lsp'},
+				{ name = 'buffer', keyword_length=2, max_item_count=5},
+				{ name = 'nvim_lsp', keyword_length=2 }
+				-- { name = 'nvim_lsp',
+				-- 	option = {
+				-- 		markdown_oxide = {
+				-- 	  		keyword_pattern = [[\(\k\| \|\/\|#\)\+]]
+				-- 		}
+				-- 	}
+				-- },
 			}),
 			mapping = cmp.mapping.preset.insert({
 					['<C-b>'] = cmp.mapping.scroll_docs(-4),
@@ -272,26 +396,27 @@ vim.call('plug#end')
 			formatting = {
 				format = lspkind.cmp_format({
 						-- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
-						mode 		= 'symbol_text',
+						mode 		= 'symbol',
 						preset 		= 'default',
 						show_labelDetails = true,
 						maxwidth	= 50,
 						ellipsis_char= '..',
 				})
 			},
-			snippets = {
+			snippet = {
 				expand = function (args)
-					vim.fn["vsnip#anonymous"](args.body)
+					luasnip.lsp_expand(args.body)
 				end
 			}
 		}
 		cmp.setup.filetype("tex", {
 		  sources = {
-			{ name = 'vimtex', max_item_count = 5},
-			{ name = 'buffer', max_item_count = 10},
-			{ name = 'nvim_lsp', max_item_count = 5}
+				{ name = 'vimtex', max_item_count = 10},
+				{ name = 'buffer', keyword_length=2, max_item_count=5},
+				{ name = 'nvim_lsp'},
 		  },
 		})
+
 
 -- lsp-config
 		local lsp = require('lsp-zero')
@@ -308,19 +433,18 @@ vim.call('plug#end')
 				vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
 				vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.rename() end, opts)
 		end)
-		require('lspconfig').texlab.setup({
-				on_attach = function (client, bufnr)
-						ih.on_attach(client, bufnr)
-				end
-		})
+		-- require('lspconfig').texlab.setup({
+		-- 		on_attach = function (client, bufnr)
+		-- 				ih.on_attach(client, bufnr)
+		-- 		end
+		-- })
 		require('mason').setup({})
 		require('mason-lspconfig').setup({
-				ensure_installed = {},
-				handlers = {
-						lsp.default_setup,
-				},
 		})
-
+		-- require("lspconfig").markdown_oxide.setup({
+		-- 	-- capabilities = capabilities, -- ensure that capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = true
+		-- 	root_dir = lspconfig.util.root_pattern('.git', vim.fn.getcwd()), -- this is a temp fix for an error in the lspconfig for this LS
+		-- })
 
 
 -- illustrate-config
@@ -331,12 +455,13 @@ vim.call('plug#end')
 		vim.keymap.set('n', '<leader>fs', function() illustrate_finder.search_create_copy_and_open() end, {})
 
 -- vimtex-config
-		vim.keymap.set('n', '<localleader>v', '<plug>(vimtex-view)')   -- Open PDF file for tex
 		vim.keymap.set('n', '<leader>uu', ':UndotreeToggle')
+		vim.keymap.set("n", "<leader>gg",  ":LazyGit<CR>", {silent=true, noremap=true})
 
 		vim.g.tex_flavor='latex'
 		vim.g.vimtex_view_method='sioyek'
 		vim.g.vimtex_view_sioyek_exe='/Applications/sioyek.app/Contents/MacOS/sioyek'
+		vim.g.vimtex_context_pdf_viewer='/Applications/sioyek.app/Contents/MacOS/sioyek'
 		vim.g.vimtex_callback_progpath='/Applications/nvim-macos/bin/nvim'
 		vim.g.vimtex_quickfix_mode=0
 		vim.g.vimtex_complete_ignore_case=1
@@ -358,11 +483,69 @@ vim.call('plug#end')
 								  }
 								}
 
--- lazygit-config
-		vim.keymap.set("n", "<leader>gg",  ":LazyGit<CR>", {silent=true, noremap=true})
-
 		vim.g.mapleader = ";"
 		vim.g.maplocalleader=","
+
+-- colorscheme : follow system
+
+		local function is_dark_mode()
+			local handle = io.popen('defaults read -g AppleInterfaceStyle 2>/dev/null')
+			local result = handle:read("*a")
+			handle:close()
+			return result:match("Dark") and "dark" or "light"
+		end
+
+		function set_color_scheme(bg)
+			if is_setting_colorscheme then return end
+			is_setting_colorscheme = true
+
+			bg = bg or is_dark_mode()
+
+			local themes = {
+				dark = {
+					colorscheme = "github_dark_tritanopia",
+					highlight = [[
+						highlight MatchParen cterm=reverse ctermfg=none ctermbg=none guifg=crimson guibg=none
+						highlight LineNr guifg=#424242
+					]],
+					mode_cmd = 'osascript -e \'tell application "System Events" to tell appearance preferences to set dark mode to true\'',
+					alac_cmd = "sed -i '' 's/github_light/github_dark/' ~/.config/alacritty.toml"
+				},
+				light = {
+					colorscheme = "github_light_tritanopia",
+					highlight = [[
+						highlight MatchParen cterm=reverse ctermfg=none ctermbg=none guifg=black guibg=lightblue
+						highlight LineNr guifg=#e7e7e7
+					]],
+					mode_cmd = 'osascript -e \'tell application "System Events" to tell appearance preferences to set dark mode to false\'',
+					alac_cmd = "sed -i '' 's/github_dark/github_light/' ~/.config/alacritty.toml"
+				}
+			}
+
+			local theme = themes[bg]
+			if theme then
+				vim.cmd("colorscheme " .. theme.colorscheme)
+				vim.cmd(theme.highlight)
+				io.popen(theme.mode_cmd):close()
+				io.popen(theme.alac_cmd):close()
+			else
+				vim.notify("Invalid background option: " .. bg, vim.log.levels.WARN)
+			end
+
+			is_setting_colorscheme = false
+		end
+
+		-- Autocommand to sync with Neovim's background setting
+		vim.api.nvim_create_autocmd("OptionSet", {
+			pattern = "background",
+			callback = function()
+				if not is_setting_colorscheme then
+					set_color_scheme(vim.o.background)
+				end
+			end,
+		})
+
+		set_color_scheme()
 
 -- general keymaps 
 		-- edit files 
@@ -374,16 +557,15 @@ vim.call('plug#end')
 		--	end, {expr = true}) 										 -- switching tabs 
 		-- vim.keymap.set('n', '<S-TAB>',':tabprevious<CR>', {silent=true}) -- switching tabs 
 
-		-- vim.keymap.set("i", "<C-f>", "<Esc><cmd>exec 'r!inkscape-figures-manager new -f -d figures -l \"'.getline('.').'\"'<CR>kkkkkkddjjjf{a")
+		-- vim.keymap.set("i", "<C-f>", "<Esc><cmd>exec 'r!inkscape-figures-manager new -f -d figures -l \"'.getline('.').'\"'<CR>")
 
 
 vim.opt.termguicolors = true
 vim.cmd([[
 		let 		g:markdown_fenced_languages = ['tex', 'python', 'julia']
-		set 		cmdheight=0	
 		set 		relativenumber
-		set 		signcolumn=number
 		set 		ruler 
+		set			scl=number
 		set 		splitright
 		set 		splitbelow
 		set 		vb t_vb=
@@ -397,39 +579,33 @@ vim.cmd([[
 		set 		linebreak
 		set 		tabstop=4
 		set			shiftwidth=4
-		set 		foldlevel=99  		" dont fold when file is opened
-		set			bg=light
-		
-		nnoremap gx <CMD>execute '!open ' .. shellescape(expand('<cfile>'), v:true)<CR>
-		inoremap jj	<esc>
-		vnoremap = 		g_
-		nnoremap = 		g_
-		inoremap <c-e> 		<c-o>A
-		inoremap <c-a> 		<c-o>B
-		inoremap <c-d>  	<c-o>0
-		inoremap <c-s> 		<c-o>E<c-o>a
-		tnoremap 	 <Esc>		<c-\><c-n>
-		nnoremap <leader>] :cn<CR>
-		nnoremap <leader>[ :cp<CR>
-		imap 	 <c-k> 		<Esc>:wincmd k<CR>i
-		imap	 <c-j>		<Esc>:wincmd j<CR>i
-		imap 	 <c-h>		<Esc>:wincmd h<CR>i
-		imap 	 <c-l>		<Esc>:wincmd l<CR>i
-		tmap 	 <c-k> 		<Esc>:wincmd k<CR>
-		tmap	 <c-j>		<Esc>:wincmd j<CR>
-		tmap 	 <c-h>		<Esc>:wincmd h<CR>
-		tmap 	 <c-l>		<Esc>:wincmd l<CR>
-		nmap 	 <c-k> 		:wincmd k<CR>
-		nmap	 <c-j>		:wincmd j<CR>
-		nmap 	 <c-h>		:wincmd h<CR>
-		nmap 	 <c-l>		:wincmd l<CR>
-		noremap   ;wq   :wq<CR>
-		noremap   ;ww 	:w<CR>
-		noremap   ;qq 	:q<CR>
-		colorscheme xcode
-		highlight MatchParen cterm=bold ctermfg=none ctermbg=none guifg=black guibg=lightblue
-		"highlight iCursor guifg=white guibg=steelblue
-		hi texCmd guifg=#51477a guibg=NONE gui=NONE ctermfg=127 ctermbg=NONE cterm=NONE
+		set			foldlevel=1
+
+		nnoremap	<silent> 	<leader>cn		:cnext<CR>
+		nnoremap	<silent> 	<leader>cr		:cprev<CR>
+		nnoremap 	gx 			<CMD>execute '!open ' .. shellescape(expand('<cfile>'), v:true)<CR>
+		inoremap 	jj			<esc>
+		vnoremap 	= 			g_
+		nnoremap 	= 			g_
+		inoremap 	<c-e> 		<c-o>A
+		inoremap 	<c-a> 		<c-o>B
+		inoremap 	<c-d>  		<c-o>0
+		inoremap 	<c-s> 		<c-o>E<c-o>a
+		nnoremap 	<leader>] 	:cn<CR>
+		nnoremap 	<leader>[ 	:cp<CR>
+		noremap   	;wq   		:wq<CR>
+		noremap   	;ww 		:w<CR>
+		noremap   	;qq 		:q<CR>
+		nmap 		ga 			<plug>(EasyAlign)
+		xnoremap 	<leader>f	:<C-u>set foldmethod=manual<CR>:'<,'>fold<CR>
+		xmap 		ga 			<plug>(EasyAlign)
+
+		" highlight iCursor guifg=white guibg=steelblue
+		" hi texCmd guifg=#51477a guibg=NONE gui=NONE ctermfg=127 ctermbg=NONE cterm=NONE
+		hi texCmd guifg=#8679b5 guibg=NONE gui=NONE ctermfg=127 ctermbg=NONE cterm=NONE
+		" highlight CursorLineNr guifg=#ff0000
+		" highlight SignColumn guibg=NONE
+		set cul
 		hi! link texMathEnvArgName texEnvArgName
 		hi! link texMathZone LocalIdent
 		hi! link texMathZoneEnv texMathZone
@@ -438,9 +614,25 @@ vim.cmd([[
 		hi! link texMathZoneXX texMathZone
 		hi! link texMathZoneEnsured texMathZone
 		hi! link QuickFixLine Normal
-		hi! link qfLineNr Normal
-		hi! link EndOfBuffer LineNr
-		hi! link Conceal LocalIdent
-		hi Search cterm=NONE ctermfg=black ctermbg=yellow
+
+		" hi! link qfLineNr Normal
+		" hi! link EndOfBuffer LineNr
+		" hi! link Conceal LocalIdent
+		" hi Search cterm=NONE ctermfg=black ctermbg=yellow
 ]])
+
+-- Non-Italics Comments 
+-- Get current `Comment` highlight settings
+local comment_hl = vim.api.nvim_get_hl_by_name('Comment', true)
+
+-- Apply `italic = false` but keep the current color and other settings
+vim.api.nvim_set_hl(0, 'Comment', {
+    fg = comment_hl.foreground,
+    bg = comment_hl.background,
+    sp = comment_hl.special,
+    bold = comment_hl.bold,
+    italic = false,  -- Remove italics
+    underline = comment_hl.underline,
+    undercurl = comment_hl.undercurl,
+})
 
