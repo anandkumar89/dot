@@ -1,4 +1,4 @@
-local vim  = vim 
+local vim  = vim
 vim.fn['vimtex#options#init']()
 vim.fn['vimtex#text_obj#init_buffer']()
 vim.fn['vimtex#init']()
@@ -7,9 +7,12 @@ require('cmp_zotcite').setup({
 	filetypes = {"markdown"},
 })
 
+
 vim.cmd([[
 set wrap
 ]])
+
+
 
 vim.g.vim_markdown_frontmatter = 1
 vim.g.markdown_fenced_languages =  {'tex', 'python', 'julia'}

@@ -1,3 +1,4 @@
+.DS_Store
 DslrDashboard
 coc
 configstore
@@ -11,3 +12,10 @@ octave
 pybliometrics.cfg
 texstudio
 wireshark
+zsh
+nvim/plugged/*
+karabiner/*
+htop/*
+github-copilot/*
+darktable/*
+alacritty/themes/*

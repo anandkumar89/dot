@@ -1,3 +1,4 @@
+set foldmethod=syntax
 let g:latex_to_unicode_auto = 1
 let g:latex_to_unicode_tab  = 0
 let g:latex_to_unicode_cmd_mapping = ['<C-j>']
