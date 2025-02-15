@@ -379,7 +379,7 @@ vim.call('plug#end')
 
 vim.opt.termguicolors = true
 vim.cmd([[
-		let 	g:markdown_fenced_languages = ['tex', 'python', 'julia']
+		let 		g:markdown_fenced_languages = ['tex', 'python', 'julia']
 		set 		cmdheight=0	
 		set 		relativenumber
 		set 		signcolumn=number
@@ -393,11 +393,12 @@ vim.cmd([[
 		set 		noswapfile
 		set 		wmw=0
 		set 		hlsearch
-		set 		nowrap 
+		set 		wrap 
 		set 		linebreak
 		set 		tabstop=4
 		set			shiftwidth=4
 		set 		foldlevel=99  		" dont fold when file is opened
+		set			bg=light
 		
 		nnoremap gx <CMD>execute '!open ' .. shellescape(expand('<cfile>'), v:true)<CR>
 		inoremap jj	<esc>
@@ -408,6 +409,8 @@ vim.cmd([[
 		inoremap <c-d>  	<c-o>0
 		inoremap <c-s> 		<c-o>E<c-o>a
 		tnoremap 	 <Esc>		<c-\><c-n>
+		nnoremap <leader>] :cn<CR>
+		nnoremap <leader>[ :cp<CR>
 		imap 	 <c-k> 		<Esc>:wincmd k<CR>i
 		imap	 <c-j>		<Esc>:wincmd j<CR>i
 		imap 	 <c-h>		<Esc>:wincmd h<CR>i
@@ -423,21 +426,21 @@ vim.cmd([[
 		noremap   ;wq   :wq<CR>
 		noremap   ;ww 	:w<CR>
 		noremap   ;qq 	:q<CR>
+		colorscheme xcode
+		highlight MatchParen cterm=bold ctermfg=none ctermbg=none guifg=black guibg=lightblue
+		"highlight iCursor guifg=white guibg=steelblue
+		hi texCmd guifg=#51477a guibg=NONE gui=NONE ctermfg=127 ctermbg=NONE cterm=NONE
+		hi! link texMathEnvArgName texEnvArgName
+		hi! link texMathZone LocalIdent
+		hi! link texMathZoneEnv texMathZone
+		hi! link texMathZoneEnvStarred texMathZone
+		hi! link texMathZoneX texMathZone
+		hi! link texMathZoneXX texMathZone
+		hi! link texMathZoneEnsured texMathZone
+		hi! link QuickFixLine Normal
+		hi! link qfLineNr Normal
+		hi! link EndOfBuffer LineNr
+		hi! link Conceal LocalIdent
+		hi Search cterm=NONE ctermfg=black ctermbg=yellow
 ]])
 
--- set background=dark
--- colorscheme rosepine
-		vim.cmd('colorscheme xcode')
-		vim.cmd('hi texCmd guifg=#51477a guibg=NONE gui=NONE ctermfg=127 ctermbg=NONE cterm=NONE')
-		vim.cmd('hi! link texMathEnvArgName texEnvArgName')
-		vim.cmd('hi! link texMathZone LocalIdent')
-		vim.cmd('hi! link texMathZoneEnv texMathZone')
-		vim.cmd('hi! link texMathZoneEnvStarred texMathZone')
-		vim.cmd('hi! link texMathZoneX texMathZone')
-		vim.cmd('hi! link texMathZoneXX texMathZone')
-		vim.cmd('hi! link texMathZoneEnsured texMathZone')
-		vim.cmd('hi Search cterm=NONE ctermfg=black ctermbg=yellow')
-		vim.cmd('hi! link QuickFixLine Normal')
-		vim.cmd('hi! link qfLineNr Normal')
-		vim.cmd('hi! link EndOfBuffer LineNr')
-		vim.cmd('hi! link Conceal LocalIdent')
