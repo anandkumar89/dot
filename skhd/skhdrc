@@ -55,4 +55,8 @@ shift + alt + ctrl - f : yabai -m space --layout float
 shift + alt + ctrl - s : yabai -m space --layout stack
 shift + alt + ctrl - b : yabai -m space --layout bsp
 
+# cycle forwards on the focused display - make it work with skhd
+# id="$(yabai -m query --spaces --display | jq 'sort_by(.index) | reverse | .[map(."has-focus") | index(true) - 1].index')" && yabai -m space --focus "${id}"
 
+# # cycle backwards on the focused display - make it work with skhd
+# id="$(yabai -m query --spaces --display | jq 'sort_by(.index) | .[map(."has-focus") | index(true) - 1].index')" && yabai -m space --focus "${id}"

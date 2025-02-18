@@ -16,7 +16,7 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 		Plug 'kylechui/nvim-surround'
 		Plug 'ggandor/leap.nvim'
 		Plug 'ThePrimeagen/harpoon'
-		-- Plug 'folke/which-key.nvim' --wanted only for spell, runs all the time
+		Plug 'folke/which-key.nvim' --wanted only for spell, runs all the time
 		-- Plug 'm4xshen/autoclose.nvim'
 		Plug 'nvim-tree/nvim-tree.lua'
 		Plug 'L3MON4D3/LuaSnip'
@@ -75,10 +75,11 @@ vim.call('plug#end')
 
 --- copilot.config
 		vim.g.copilot_filetypes = {lua=true, tex=false, text=true, python=true, markdown=false}
-		vim.g.copilot_keymap_enabled = 1
-		vim.g.copilot_keymap_next = '<C-]>'
-		vim.g.copilot_keymap_prev = '<C-[>'
-		vim.g.copilot_keymap_accept = '<C-L>'
+		vim.keymap.set('i', '<C-L>', '<Plug>(copilot-accept-word)')
+		vim.keymap.set('i', '<C-O>', '<Plug>(copilot-next)')
+		vim.keymap.set('i', '<C-J>', '<Plug>(copilot-accept-line)')
+		vim.keymap.set('i', '<C-K>', '<Plug>(copilot-dismiss)')
+		vim.keymap.set('i', '<C-]>', '<Plug>(copilot-suggest)')
 
 --- harpoon.config	
 		require('harpoon').setup({
@@ -361,7 +362,10 @@ vim.call('plug#end')
 		numhl = true,
 		signcolumn = false,
 	})
-	vim.keymap.set('n', '<leader>gp', ':lua require"gitsigns".preview_hunk()<CR>')
+	vim.keymap.set('n', '<leader>go', ':lua require"gitsigns".preview_hunk()<CR>')
+	vim.keymap.set('n', '<leader>gn', ':lua require"gitsigns".next_hunk()<CR>')
+	vim.keymap.set('n', '<leader>gp', ':lua require"gitsigns".prev_hunk()<CR>')
+	vim.keymap.set('n', '<leader>gr', ':lua require"gitsigns".reset_hunk()<CR>')
 
 -- cmp-config
 		local capabilities = require('cmp_nvim_lsp').default_capabilities()
@@ -439,8 +443,7 @@ vim.call('plug#end')
 		-- 		end
 		-- })
 		require('mason').setup({})
-		require('mason-lspconfig').setup({
-		})
+		require('mason-lspconfig').setup({})
 		-- require("lspconfig").markdown_oxide.setup({
 		-- 	-- capabilities = capabilities, -- ensure that capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = true
 		-- 	root_dir = lspconfig.util.root_pattern('.git', vim.fn.getcwd()), -- this is a temp fix for an error in the lspconfig for this LS
@@ -457,7 +460,7 @@ vim.call('plug#end')
 -- vimtex-config
 		vim.keymap.set('n', '<leader>uu', ':UndotreeToggle')
 		vim.keymap.set("n", "<leader>gg",  ":LazyGit<CR>", {silent=true, noremap=true})
-
+		vim.keymap.set("n", "<localleader>v", ":VimtexView<CR>", {silent=true})
 		vim.g.tex_flavor='latex'
 		vim.g.vimtex_view_method='sioyek'
 		vim.g.vimtex_view_sioyek_exe='/Applications/sioyek.app/Contents/MacOS/sioyek'

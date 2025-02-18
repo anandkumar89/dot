@@ -162,3 +162,8 @@ mods    = "Control"
 action  = "Paste"
 key 	= "Space"
 mods 	= "Command | Shift"
+
+[[keyboard.bindings]]
+action  = "None"
+key 	= "="
+mods	= "Command"
