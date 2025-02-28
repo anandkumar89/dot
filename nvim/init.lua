@@ -16,12 +16,18 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 		Plug 'kylechui/nvim-surround'
 		Plug 'ggandor/leap.nvim'
 		Plug 'ThePrimeagen/harpoon'
-		Plug 'folke/which-key.nvim' --wanted only for spell, runs all the time
-		-- Plug 'm4xshen/autoclose.nvim'
+		-- Plug 'folke/which-key.nvim' --wanted only for spell, runs all the time
 		Plug 'nvim-tree/nvim-tree.lua'
-		Plug 'L3MON4D3/LuaSnip'
+		-- Plug 'L3MON4D3/LuaSnip'
 		Plug 'numToStr/Comment.nvim'
 		Plug 'github/copilot.vim'
+
+		-- add fzf
+		Plug '/usr/local/opt/fzf'
+		-- Plug 'junegunn/fzf'
+		-- Plug 'junegunn/fzf.vim'
+		Plug 'ibhagwan/fzf-lua'
+		Plug 'nvim-telescope/telescope.nvim'
 
 		Plug 'lervag/vimtex'
 		Plug 'honza/vim-snippets' -- someday look into what it does, 
@@ -31,88 +37,89 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 		Plug '~/.config/nvim/plugged/figures-manager' -- creating and inserting figures in md, tex
 		Plug 'rcarriga/nvim-notify'
 
-		Plug 'nvim-telescope/telescope.nvim'
-			Plug 'nvim-telescope/telescope-file-browser.nvim'
-			Plug "isak102/telescope-git-file-history.nvim"
-			Plug 'tpope/vim-fugitive'
-			Plug 'lewis6991/gitsigns.nvim'
 
-		Plug 'tpope/vim-obsession'
+		Plug 'tpope/vim-fugitive'
+		Plug 'lewis6991/gitsigns.nvim'
 
-		-- LSP thingy
+		-- LSP & Completion
 		Plug 'neovim/nvim-lspconfig'
 		Plug 'VonHeikemen/lsp-zero.nvim'
 		Plug 'williamboman/mason-lspconfig.nvim'
 		Plug 'williamboman/mason.nvim'
 		Plug 'hrsh7th/nvim-cmp'
-			Plug 'hrsh7th/cmp-buffer'
-			Plug 'hrsh7th/cmp-path'
-			Plug 'hrsh7th/cmp-nvim-lsp'
-			Plug 'onsails/lspkind.nvim'
-			Plug 'lvimuser/lsp-inlayhints.nvim'
+		Plug 'hrsh7th/cmp-buffer'
+		Plug 'hrsh7th/cmp-path'
+		Plug 'hrsh7th/cmp-nvim-lsp'
+		Plug 'onsails/lspkind.nvim'
+		Plug 'lvimuser/lsp-inlayhints.nvim'
 
 		-- markdown, obsidian specific plugins
 		Plug 'epwalsh/obsidian.nvim'
-		Plug 'jalvesaq/zotcite'
-			Plug 'nvim-lua/plenary.nvim'
-			Plug 'jalvesaq/cmp-zotcite'
-			Plug 'preservim/vim-markdown'
+		Plug '~/.config/nvim/plugged/zotcite'
+		Plug 'nvim-lua/plenary.nvim'
+		Plug '~/.config/nvim/plugged/cmp-zotcite'
+		Plug 'iamcco/markdown-preview.nvim'
 
 		Plug 'pocco81/true-zen.nvim'
 		Plug 'catppuccin/nvim'
 		Plug 'lunacookies/vim-colors-xcode'
-		Plug 'mhartington/oceanic-next'
-		Plug 'cocopon/iceberg.vim'
-		Plug 'navarasu/onedark.nvim'
 		Plug 'projekt0n/github-nvim-theme'
-		-- Plug 'f-person/auto-dark-mode.nvim' --works by creating a background job, just toggle manually
 
+		-- julia development
 		Plug 'JuliaEditorSupport/julia-vim'
 		Plug 'kdheepak/JuliaFormatter.vim' -- languageserver.jl already supports this! maynot want to use. Check with coc-julia
-		Plug 'jpalardy/vim-slime'
 vim.call('plug#end')
 
+-- config.fzf 
+	-- vim.g.fzf_vim = {}
+	-- vim.g.fzf_command_prefix = 'Fzf'
+	-- vim.g.fzf_preview_window = {'hidden', 'ctrl-/:preview(stat {})'}
+	-- vim.g.fzf_layout = { window= { width= 0.9, height= 0.6 } }
+	-- vim.g.fzf_action = {
+	--   ['ctrl-/'] = 'change-preview(stat {})',
+	-- }
+
 --- copilot.config
-		vim.g.copilot_filetypes = {lua=true, tex=false, text=true, python=true, markdown=false}
-		vim.keymap.set('i', '<C-L>', '<Plug>(copilot-accept-word)')
-		vim.keymap.set('i', '<C-O>', '<Plug>(copilot-next)')
-		vim.keymap.set('i', '<C-J>', '<Plug>(copilot-accept-line)')
-		vim.keymap.set('i', '<C-K>', '<Plug>(copilot-dismiss)')
-		vim.keymap.set('i', '<C-]>', '<Plug>(copilot-suggest)')
+	vim.g.copilot_filetypes = {lua=true, tex=false, text=true, python=true, markdown=false}
+	vim.keymap.set('i', '<C-L>', '<Plug>(copilot-accept-word)')
+	vim.keymap.set('i', '<C-O>', '<Plug>(copilot-next)')
+	vim.keymap.set('i', '<C-J>', '<Plug>(copilot-accept-line)')
+	vim.keymap.set('i', '<C-K>', '<Plug>(copilot-dismiss)')
+	vim.keymap.set('i', '<C-]>', '<Plug>(copilot-suggest)')
 
 --- harpoon.config	
-		require('harpoon').setup({
-			menu = { width = 80, height=15 }
-		})
-			vim.keymap.set('n', 'hx', require('harpoon.mark').add_file)
-			vim.keymap.set('n', 'hn', require('harpoon.ui').nav_next)
-			vim.keymap.set('n', 'hp', require('harpoon.ui').nav_prev)
-			vim.keymap.set('n', 'hb', require('harpoon.ui').toggle_quick_menu)
+	require('harpoon').setup({
+		menu = { width = 80, height=15 }
+	})
+	vim.keymap.set('n', 'hx', require('harpoon.mark').add_file)
+	vim.keymap.set('n', 'hn', require('harpoon.ui').nav_next)
+	vim.keymap.set('n', 'hp', require('harpoon.ui').nav_prev)
+	vim.keymap.set('n', 'hb', require('harpoon.ui').toggle_quick_menu)
 
 --- comment.config gc, gcc to toggle comment 
-		require('comment').setup()
+	require('comment').setup()
 
 --- zen.mode.config
-		require('true-zen').setup({
-			modes = {
-				ataraxis = {
-					minimum_writing_area = { width=120}
-				}
+	require('true-zen').setup({
+		modes = {
+			ataraxis = {
+				minimum_writing_area = { width=120}
 			}
-		})
-		vim.api.nvim_set_keymap("n", "<leader>zn", ":TZNarrow<CR>", {})
-		-- vim.api.nvim_set_keymap("v", "<leader>zn", ":'<,'>TZNarrow<CR>", {})
-		-- vim.api.nvim_set_keymap("n", "<leader>zf", ":TZFocus<CR>", {})
-		-- vim.api.nvim_set_keymap("n", "<leader>zm", ":TZMinimalist<CR>", {})
-		-- vim.api.nvim_set_keymap("n", "<leader>za", ":TZAtaraxis<CR>", {})
+		}
+	})
+	vim.api.nvim_set_keymap("n", "<leader>zn", ":TZNarrow<CR>", {})
+	-- vim.api.nvim_set_keymap("v", "<leader>zn", ":'<,'>TZNarrow<CR>", {})
+	-- vim.api.nvim_set_keymap("n", "<leader>zf", ":TZFocus<CR>", {})
+	-- vim.api.nvim_set_keymap("n", "<leader>zm", ":TZMinimalist<CR>", {})
+	-- vim.api.nvim_set_keymap("n", "<leader>za", ":TZAtaraxis<CR>", {})
 
-		require('notify').setup({
-			render = "minimal",
-			top_down = false,
-			max_width = 80
-		})
+	require('notify').setup({
+		render = "minimal",
+		top_down = false,
+		max_width = 80
+	})
 
-		-- require("chatgpt").setup()
+	-- require("chatgpt").setup()
 
 -- autoclose.config (https://github.com/m4xshen/autoclose.nvim)
 --		require('autoclose').setup()
@@ -120,7 +127,8 @@ vim.call('plug#end')
 -- zotcite.config 
 	require('zotcite').setup({
 		filetypes= {"markdown", "tex"},
-		open_cmd = "/Applications/sioyek.app/Contents/MacOS/sioyek"
+		open_cmd = "/Applications/sioyek.app/Contents/MacOS/sioyek",
+		hl_cite_key = false
 	})
 	require('cmp_zotcite').setup({
 		filetypes= {"markdown"}
@@ -227,7 +235,7 @@ vim.call('plug#end')
 			-- }
 		})
 		-- require('telescope').load_extension("bibtex")
-		require("telescope").load_extension("git_file_history")
+		-- require("telescope").load_extension("git_file_history")
 		-- require("telescope").load_extension("zotero") -- TODO someday handling zotero database better than zotcite?
 
 		-- telescope.keymaps 
@@ -280,8 +288,8 @@ vim.call('plug#end')
 			},
 			templates = {
 				subdir = "Meta/Templates",
-				date_format = "%Y-%m-%d",
-				time_format = "%H:%M",
+				-- date_format = "%Y-%m-%d",
+				-- time_format = "%H:%M",
 			},
 			attachments = {
 				img_folder = "Meta/Attachments",
@@ -297,8 +305,12 @@ vim.call('plug#end')
 				min_chars = 2,
 			},
 			note_id_func = function (title)
-				return title
-			end
+				return tostring(os.time())
+			end,
+			note_path_func = function (spec)
+				local path = spec.dir / tostring(spec.title)
+				return path:with_suffix(".md")
+			end,
 		})
 
 		vim.keymap.set('n', '<leader>oo', ':ObsidianSearch<CR>')
@@ -358,17 +370,19 @@ vim.call('plug#end')
 
 -- gitsigns.config 
 	require('gitsigns').setup({
-		numhl = true,
-		signcolumn = false,
+		numhl = false,
+		signcolumn = true,
 	})
-	vim.keymap.set('n', '<leader>go', ':lua require"gitsigns".preview_hunk()<CR>')
-	vim.keymap.set('n', '<leader>gn', ':lua require"gitsigns".next_hunk()<CR>')
-	vim.keymap.set('n', '<leader>gp', ':lua require"gitsigns".prev_hunk()<CR>')
+	vim.keymap.set('n', ']o', ':lua require"gitsigns".preview_hunk()<CR>')
+	vim.keymap.set('n', '[o', ':lua require"gitsigns".preview_hunk()<CR>')
+	vim.keymap.set('n', '<leader>gi', ':lua require"gitsigns".preview_hunk_inline()<CR>')
+	vim.keymap.set('n', ']g', ':lua require"gitsigns".next_hunk()<CR>')
+	vim.keymap.set('n', '[g', ':lua require"gitsigns".prev_hunk()<CR>')
 	vim.keymap.set('n', '<leader>gr', ':lua require"gitsigns".reset_hunk()<CR>')
 
 -- cmp-config
 		local capabilities = require('cmp_nvim_lsp').default_capabilities()
-		local luasnip = require('luasnip')
+		-- local luasnip = require('luasnip')
 		local lspkind = require('lspkind')
 		local cmp = require('cmp')
 		cmp.setup {
@@ -406,11 +420,11 @@ vim.call('plug#end')
 						ellipsis_char= '..',
 				})
 			},
-			snippet = {
-				expand = function (args)
-					luasnip.lsp_expand(args.body)
-				end
-			}
+			-- snippet = {
+			-- 	expand = function (args)
+			-- 		luasnip.lsp_expand(args.body)
+			-- 	end
+			-- }
 		}
 		cmp.setup.filetype("tex", {
 		  sources = {
@@ -565,9 +579,10 @@ vim.call('plug#end')
 vim.opt.termguicolors = true
 vim.cmd([[
 		let 		g:markdown_fenced_languages = ['tex', 'python', 'julia']
-		set 		relativenumber
-		set 		ruler 
-		set			scl=number
+		set 		nornu
+		" set 		relativenumber
+		" set 		ruler 
+		" set			scl=number
 		set 		splitright
 		set 		splitbelow
 		set 		vb t_vb=
@@ -575,13 +590,13 @@ vim.cmd([[
 		setlocal 	spell
 		set 		spelllang=en_us
 		set 		noswapfile
-		set 		wmw=0
+		" set 		wmw=0
 		set 		hlsearch
 		set 		wrap 
 		set 		linebreak
 		set 		tabstop=4
 		set			shiftwidth=4
-		set			foldlevel=1
+		" set			foldlevel=0
 
 		nnoremap	<silent> 	<leader>cn		:cnext<CR>
 		nnoremap	<silent> 	<leader>cr		:cprev<CR>
@@ -637,4 +652,21 @@ vim.api.nvim_set_hl(0, 'Comment', {
     underline = comment_hl.underline,
     undercurl = comment_hl.undercurl,
 })
+
+-- Insert file creation time
+vim.api.nvim_create_user_command("InsertFileBirthTime", function()
+    local filename = vim.fn.expand('%') -- Get current buffer's filename
+
+    if filename == "" then
+        print("No file associated with this buffer.")
+        return
+    end
+
+    -- macOS/BSD command to get file birth (creation) time
+    local cmd = string.format("date -r $(stat -f '%%B' %s) '+%%Y-%%m-%%d %%H:%%M:%%S'", vim.fn.shellescape(filename))
+    local birth_time = vim.fn.system(cmd):gsub("\n", "") -- Run command & remove newline
+
+    -- Insert at the current cursor position
+    vim.api.nvim_put({ birth_time }, "c", true, true)
+end, {})
 
