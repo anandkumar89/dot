@@ -32,7 +32,6 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 		Plug 'rcarriga/nvim-notify'
 
 		Plug 'nvim-telescope/telescope.nvim'
-			-- Plug 'nvim-telescope/telescope-bibtex.nvim' -- allows searching and inserting citations in md, tex files, extend it to open files in sioyek | removed in favor of zotcite's Zseek (yet to configure opening in sioyek)
 			Plug 'nvim-telescope/telescope-file-browser.nvim'
 			Plug "isak102/telescope-git-file-history.nvim"
 			Plug 'tpope/vim-fugitive'
