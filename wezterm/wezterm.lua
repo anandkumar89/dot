@@ -2,39 +2,6 @@ local wezterm = require 'wezterm'
 -- local features = require 'theme_switcher'
 local act = wezterm.action
 
-local keys = {}
-local tmuxlike = {
-    -- splits
-    { key = '-', mods = 'LEADER', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
-    { key = '\\', mods = 'LEADER', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
-
-    -- pane navigation
-    { key = 'h', mods = 'LEADER', action = act.ActivatePaneDirection 'Left' },
-    { key = 'j', mods = 'LEADER', action = act.ActivatePaneDirection 'Down' },
-    { key = 'k', mods = 'LEADER', action = act.ActivatePaneDirection 'Up' },
-    { key = 'l', mods = 'LEADER', action = act.ActivatePaneDirection 'Right' },
-
-    -- zoom pane
-    { key = 'z', mods = 'LEADER', action = act.TogglePaneZoomState },
-
-    -- new window (WezTerm tab)
-	{ key = 'n', mods = 'LEADER', action = act.SpawnWindow },
-    { key = 'c', mods = 'LEADER', action = act.SpawnTab 'CurrentPaneDomain' },
-    { key = 'x', mods = 'LEADER', action = act.CloseCurrentPane { confirm = true } },
-    { key = 'q', mods = 'LEADER', action = act.PaneSelect { mode = 'Activate' } },
-  }
-
-local ctrl_cmd_swap = { "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z", "[", "]", "\\"}
-
-for _, k in ipairs(ctrl_cmd_swap) do
-	table.insert(keys, {key=k, mods="CMD", action=wezterm.action.SendKey{key=k, mods="CTRL"}})
-	table.insert(keys, {key=k, mods="CTRL", action=wezterm.action.SendKey{key=k, mods="CMD"}})
-end
-
-for _, k in ipairs(tmuxlike) do
-	table.insert(keys, k)
-end
-
 local dark_theme = 'Builtin Dark' 
 local light_theme = 'Builtin Light'
 function get_appearance()
@@ -52,6 +19,7 @@ function scheme_for_appearance(appearance)
 	end
 end
 
+local keys = {}
 config = {
 	window_decorations = "NONE",
 	font_size = 14.0,
@@ -69,15 +37,23 @@ config = {
 	-- send_composed_key_when_left_alt_is_pressed = false,
 	send_composed_key_when_right_alt_is_pressed = false,
 	font = wezterm.font_with_fallback {
-	{ family = "JetBrainsMono Nerd Font", weight = "Regular" },
-	{ family = "JetBrainsMono Nerd Font", weight = "Bold" },
-	"Symbols Nerd Font",
+		{ family = "JetBrainsMono Nerd Font", weight = "Regular" },
+		{ family = "JetBrainsMono Nerd Font", weight = "Bold" },
+		"Symbols Nerd Font",
 	},
 	audible_bell = "Disabled",
 	disable_default_key_bindings = true,
 	adjust_window_size_when_changing_font_size = false,
-	leader = { key = 'b', mods = 'CMD', timeout_milliseconds = 1000 },
+	leader = { key = 'a', mods = 'CMD', timeout_milliseconds = 400 },
 	keys = keys,
+	ssh_domains = {
+		{
+			name = "passpoli",
+			remote_address = '10.119.2.11',
+			multiplexing = "WezTerm",
+			remote_wezterm_path = '/home/anand.kumar/bin/wezterm',
+		}
+	}
 }
 
 wezterm.on("switch_theme", function (window, pane)
@@ -93,53 +69,73 @@ wezterm.on("switch_theme", function (window, pane)
 	window:set_config_overrides(overrides)
 end)
 
-table.insert(config.keys, { key = "O", mods = "CMD|SHIFT", action = wezterm.action.EmitEvent("switch_theme") })
 
--- table.insert(config.keys, { key = "=", mods = "CMD", action = wezterm.action.ShowDebugOverlay })
+local keymaps = {
+    -- splits
+    { key = '-', mods = 'LEADER', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
+    { key = '\\', mods = 'LEADER', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
+    { key = 'D',  mode = 'LEADER', action = act.DetachDomain 'CurrentPaneDomain'},
+    -- pane navigation
+    { key = 'h', mods = 'LEADER', action = act.ActivatePaneDirection 'Left' },
+    { key = 'j', mods = 'LEADER', action = act.ActivatePaneDirection 'Down' },
+    { key = 'k', mods = 'LEADER', action = act.ActivatePaneDirection 'Up' },
+    { key = 'l', mods = 'LEADER', action = act.ActivatePaneDirection 'Right' },
 
--- Handy tmux-style tab/split bindings
-table.insert(config.keys, { key = "t", mods = "CMD|SHIFT", action = wezterm.action.SpawnTab "CurrentPaneDomain" })
-table.insert(config.keys, { key = "w", mods = "CMD|SHIFT", action = wezterm.action.CloseCurrentTab { confirm = true } })
-table.insert(config.keys, { key = "Enter", mods = "CMD|SHIFT", action = wezterm.action.SplitHorizontal { domain = "CurrentPaneDomain" } })
-table.insert(config.keys, { key = "-", mods = "CMD|SHIFT", action = wezterm.action.SplitVertical { domain = "CurrentPaneDomain" } })
-table.insert(config.keys, { key = "H", mods = "CMD", action = wezterm.action.ActivatePaneDirection "Left" })
-table.insert(config.keys, { key = "J", mods = "CMD", action = wezterm.action.ActivatePaneDirection "Down" })
-table.insert(config.keys, { key = "K", mods = "CMD", action = wezterm.action.ActivatePaneDirection "Up" })
-table.insert(config.keys, { key = "L", mods = "CMD", action = wezterm.action.ActivatePaneDirection "Right" })
-table.insert(config.keys, { key = "Z", mods = "CMD", action = wezterm.action.TogglePaneZoomState })
+    -- zoom pane
+    { key = 'z', mods = 'LEADER', action = act.TogglePaneZoomState },
 
+    -- new window (WezTerm tab)
+	{ key = 'n', mods = 'LEADER', action = act.SpawnWindow },
+    { key = 'c', mods = 'LEADER', action = act.SpawnTab 'CurrentPaneDomain' },
+    { key = 'X', mods = 'LEADER', action = act.CloseCurrentPane { confirm = true } },
+    { key = 'q', mods = 'LEADER', action = act.PaneSelect { mode = 'Activate' } },
+	-- Handy tmux-style tab/split bindings
+	{ key = "t", mods = "CMD|SHIFT", action = wezterm.action.SpawnTab "CurrentPaneDomain" },
+	{ key = "w", mods = "CMD|SHIFT", action = wezterm.action.CloseCurrentTab { confirm = true } },
+	{ key = "Enter", mods = "CMD|SHIFT", action = wezterm.action.SplitHorizontal { domain = "CurrentPaneDomain" } },
+	{ key = "-", mods = "CMD|SHIFT", action = wezterm.action.SplitVertical { domain = "CurrentPaneDomain" } },
+	{ key = "H", mods = "CMD", action = wezterm.action.ActivatePaneDirection "Left" },
+	{ key = "J", mods = "CMD", action = wezterm.action.ActivatePaneDirection "Down" },
+	{ key = "K", mods = "CMD", action = wezterm.action.ActivatePaneDirection "Up" },
+	{ key = "L", mods = "CMD", action = wezterm.action.ActivatePaneDirection "Right" },
+	{ key = "Z", mods = "CMD", action = wezterm.action.TogglePaneZoomState },
 
--- paste 
-table.insert(config.keys, { key = "v", mods = "CMD|SHIFT", action = wezterm.action.PasteFrom "Clipboard" })
-table.insert(config.keys, { key = 'p', mods = 'CMD|SHIFT', action = wezterm.action.ActivateCommandPalette })
+	-- rotate pane clockwise 
+	{ key = "}", mods = "CMD|SHIFT", action = wezterm.action.RotatePanes "Clockwise" },
+	{ key = "{", mods = "CMD|SHIFT", action = wezterm.action.RotatePanes "CounterClockwise" },
+	-- prefix + w for window list
+	{ key = "w", mods = "LEADER", action = wezterm.action.ShowTabNavigator },
+
+	-- copy mode
+	{ key = "C", mods = "CMD|SHIFT", action = wezterm.action.ActivateCopyMode },
+	{ key = "]", mods = "CMD", action = wezterm.action.ClearSelection },
+
+	-- search mode 
+	{ key = "f", mods = "CMD|SHIFT", action = wezterm.action.Search { CaseInSensitiveString = "" } },
+
+	-- paste 
+	{ key = "v", mods = "CMD|SHIFT", action = wezterm.action.PasteFrom "Clipboard" },
+	{ key = 'p', mods = 'CMD|SHIFT', action = wezterm.action.ActivateCommandPalette },
+	{ key = "O", mods = "CMD|SHIFT", action = wezterm.action.EmitEvent("switch_theme") },
+
+	{ key = "=", mods = "CMD", action = wezterm.action.ShowDebugOverlay },
+}
+
+local ctrl_cmd_swap = { "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z", "[", "]", "\\"}
+for _, k in ipairs(ctrl_cmd_swap) do
+	table.insert(keys, {key=k, mods="CMD", action=wezterm.action.SendKey{key=k, mods="CTRL"}})
+	table.insert(keys, {key=k, mods="CTRL", action=wezterm.action.SendKey{key=k, mods="CMD"}})
+end
+
+for _, k in ipairs(keymaps) do
+	table.insert(keys, k)
+end
+
 for i = 1, 9 do
-  table.insert(config.keys, { key = tostring(i), mods = 'CMD', action = wezterm.action.ActivateTab(i-1)})
+  table.insert(config.keys, { key = tostring(i), mods = 'CMD', 		 action = wezterm.action.ActivateTab(i-1)})
   table.insert(config.keys, { key = tostring(i), mods = 'CMD|SHIFT', action = wezterm.action.ActivateWindow(9-i)})
 end
 
--- rotate pane clockwise 
-table.insert(config.keys, { key = "}", mods = "CMD|SHIFT", action = wezterm.action.RotatePanes "Clockwise" })
-table.insert(config.keys, { key = "{", mods = "CMD|SHIFT", action = wezterm.action.RotatePanes "CounterClockwise" })
--- prefix + w for window list
-table.insert(config.keys, { key = "w", mods = "LEADER", action = wezterm.action.ShowTabNavigator })
-
--- copy mode
-table.insert(config.keys, { key = "C", mods = "CMD|SHIFT", action = wezterm.action.ActivateCopyMode })
-table.insert(config.keys, { key = "]", mods = "CMD", action = wezterm.action.ClearSelection })	
-
--- search mode 
-table.insert(config.keys, { key = "f", mods = "CMD|SHIFT", action = wezterm.action.Search { CaseInSensitiveString = "" } })
-
-config.ssh_domains = {
-  {
-    -- This name should match the host you're connecting to
-    name = '10.119.2.11', 
-    remote_address = '10.119.2.11',
-    multiplexing = "WezTerm",
-    -- Tell wezterm the exact path to the binary on the remote server
-    -- (Replace 'your_username' with your actual remote username)
-    remote_wezterm_path = '/home/anand.kumar/bin/wezterm',
-  },
-}
+config.keys = keys
 
 return config
