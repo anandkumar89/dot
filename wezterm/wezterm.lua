@@ -130,5 +130,16 @@ table.insert(config.keys, { key = "]", mods = "CMD", action = wezterm.action.Cle
 -- search mode 
 table.insert(config.keys, { key = "f", mods = "CMD|SHIFT", action = wezterm.action.Search { CaseInSensitiveString = "" } })
 
+config.ssh_domains = {
+  {
+    -- This name should match the host you're connecting to
+    name = '10.119.2.11', 
+    remote_address = '10.119.2.11',
+    multiplexing = "WezTerm",
+    -- Tell wezterm the exact path to the binary on the remote server
+    -- (Replace 'your_username' with your actual remote username)
+    remote_wezterm_path = '/home/anand.kumar/bin/wezterm',
+  },
+}
 
 return config
