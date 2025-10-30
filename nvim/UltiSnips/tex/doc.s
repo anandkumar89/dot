@@ -215,7 +215,7 @@ snippet pac "Package" b
 endsnippet
 
 snippet mk "Math" wA
-$${1}$`!p
+$${1:${VISUAL}}$`!p
 if t[2] and t[2][0] not in [',', '.', '?', '-', ' ']:
 	snip.rv = ' '
 else:
@@ -266,4 +266,11 @@ snippet eref "eqref" w
 \\eqref{eq:$1} $0
 endsnippet
 
+snippet on "only" w
+\\only<${1:1}>{${2:${VISUAL}}}$0
+endsnippet
+
+snippet tit "textit" w
+\\textit{${1:${VISUAL}}}$0
+endsnippet
 # vim:ft=snippets

@@ -106,6 +106,11 @@ snip.rv = testPrefix[0] + match.group(1) + testPrefix[1]+match.group(2);
 `
 endsnippet
 
+# postfix ";"
+# snippet ";dot" "Turn \dot into \ddot" r
+# `!p snip.rv = match.group(1).replace(r"\dot{", r"\ddot{")`
+# endsnippet
+#
 
 
 #vim:ft=snippets

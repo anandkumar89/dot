@@ -50,13 +50,13 @@ arrow = {
 endglobal
 
 # matrices and vectors
-snippet pmat "pmat" w
-\begin{pmatrix} $1 \end{pmatrix} $0
-endsnippet
+# snippet pmat "pmat" w
+# \begin{pmatrix} $1 \end{pmatrix} $0
+# endsnippet
 
-snippet bmat "bmat" w
-\begin{bmatrix} $1 \end{bmatrix} $0
-endsnippet
+# snippet bmat "bmat" w
+# \begin{bmatrix} $1 \end{bmatrix} $0
+# endsnippet
 
 snippet cvec "column vector" A
 \begin{pmatrix} ${1:x}_${2:1}\\\\ \vdots\\\\ $1_${2:n} \end{pmatrix}
@@ -575,7 +575,7 @@ snippet dev "derivative" iA
 endsnippet
 
 context "math()"
-snippet pdev "partial derivative" iA
+snippet pde "partial derivative" iA
 \\frac{\\partial $1}{\\partial $2}
 endsnippet
 

@@ -24,10 +24,10 @@ map("i", "jj", "<ESC>", opts)
 
 -- panes navigation including terminal-mode
 	-- Normal mode pane navigation
-		-- vim.keymap.set('n', '<C-h>', '<C-w>h', { noremap = true })
-		-- vim.keymap.set('n', '<C-j>', '<C-w>j', { noremap = true })
-		-- vim.keymap.set('n', '<C-k>', '<C-w>k', { noremap = true })
-		-- vim.keymap.set('n', '<C-l>', '<C-w>l', { noremap = true })
+		vim.keymap.set('n', '<C-h>', '<C-w>h', { noremap = true })
+		vim.keymap.set('n', '<C-j>', '<C-w>j', { noremap = true })
+		vim.keymap.set('n', '<C-k>', '<C-w>k', { noremap = true })
+		vim.keymap.set('n', '<C-l>', '<C-w>l', { noremap = true })
 
 	-- Terminal mode pane navigation
 		vim.keymap.set('t', '<C-h>', [[<C-\><C-n><C-w>h]], { noremap = true })
@@ -39,11 +39,11 @@ map("i", "jj", "<ESC>", opts)
 		vim.keymap.set('t', '<Esc>', [[<C-\><C-n>]], { noremap = true })
 
 	-- vim-tmux-navigator.configs
-		vim.keymap.set('n', '<c-w>h', '<cmd>TmuxNavigateLeft<cr>',     { silent = true })
-		vim.keymap.set('n', '<c-w>j', '<cmd>TmuxNavigateDown<cr>',     { silent = true })
-		vim.keymap.set('n', '<c-w>k', '<cmd>TmuxNavigateUp<cr>',       { silent = true })
-		vim.keymap.set('n', '<c-w>l', '<cmd>TmuxNavigateRight<cr>',    { silent = true })
-		vim.keymap.set('n', '<c-w>p', '<cmd>TmuxNavigatePrevious<cr>', { silent = true })
+		-- vim.keymap.set('n', '<c-w>h', '<cmd>TmuxNavigateLeft<cr>',     { silent = true })
+		-- vim.keymap.set('n', '<c-w>j', '<cmd>TmuxNavigateDown<cr>',     { silent = true })
+		-- vim.keymap.set('n', '<c-w>k', '<cmd>TmuxNavigateUp<cr>',       { silent = true })
+		-- vim.keymap.set('n', '<c-w>l', '<cmd>TmuxNavigateRight<cr>',    { silent = true })
+		-- vim.keymap.set('n', '<c-w>p', '<cmd>TmuxNavigatePrevious<cr>', { silent = true })
 
 -- Movement and text manipulation
 map("v", "=", "g_", opts)

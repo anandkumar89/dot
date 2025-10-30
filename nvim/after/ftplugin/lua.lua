@@ -1,8 +1,10 @@
 -- directly pulled from  https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#lua_ls
 
 vim.cmd([[
-set foldmethod=indent
+  set foldmethod=indent
+  set foldlevel=99
 ]])
+
 
 require'lspconfig'.lua_ls.setup {
   on_init = function(client)
